@@ -26,3 +26,5 @@ GameInstance.FCall.Bind((FunctionName, Uobject) => {
     (Uobject as any)[FunctionName]();
 })
 import "./Blueprints/Test/BP_Test";
+import "./Blueprints/Character/BP_BaseCharacter";
+import "./Blueprints/Character/Player/BP_Player";
