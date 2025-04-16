@@ -6,7 +6,12 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
+struct FOnAttributeChangeData;
 class UAbilitySystemComponent;
+
+// 监听属性变化的代理
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChanged, float, Value);
+
 /**
  * 基础角色
  */
@@ -22,8 +27,23 @@ protected:
 	virtual void BeginPlay() override;
 
 	// 技能系统组件
-	UPROPERTY(EditDefaultsOnly, Category="AbilitySystem")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category="AbilitySystem")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	// 监听血量变化
+	UPROPERTY(BlueprintAssignable, Category="AbbilitySystem")
+	FOnAttributeChanged HPChanged;
+	void OnHPAttributeChanged(const FOnAttributeChangeData& Data);
+
+	// 监听蓝量变化
+	UPROPERTY(BlueprintAssignable, Category="AbbilitySystem")
+	FOnAttributeChanged MPChanged;
+	void OnMPAttributeChanged(const FOnAttributeChangeData& Data);
+
+	// 监听能量变化
+	UPROPERTY(BlueprintAssignable, Category="AbbilitySystem")
+	FOnAttributeChanged SPChanged;
+	void OnSPAttributeChanged(const FOnAttributeChangeData& Data);
 
 public:
 	virtual void Tick(float DeltaTime) override;
