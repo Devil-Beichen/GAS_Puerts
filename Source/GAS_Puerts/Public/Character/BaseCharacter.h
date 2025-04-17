@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
+class UBaseGameplayAbility;
+struct FGameplayAbilityInfo;
 struct FOnAttributeChangeData;
 class UAbilitySystemComponent;
 
@@ -27,7 +29,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	// 技能系统组件
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category="AbilitySystem")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="AbilitySystem")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	// 监听血量变化
@@ -44,6 +46,10 @@ protected:
 	UPROPERTY(BlueprintAssignable, Category="AbbilitySystem")
 	FOnAttributeChanged SPChanged;
 	void OnSPAttributeChanged(const FOnAttributeChangeData& Data);
+
+	// 获取技能信息
+	UFUNCTION(BlueprintPure, Category="AbilitySystem")
+	FGameplayAbilityInfo GetAbilityInfo(const TSubclassOf<UBaseGameplayAbility> AbilityClass, const int Lecel = 0) const;
 
 public:
 	virtual void Tick(float DeltaTime) override;

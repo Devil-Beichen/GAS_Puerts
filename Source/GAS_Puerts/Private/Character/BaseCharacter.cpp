@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "Abilitys/BaseAttributeSet.h"
+#include "Abilitys/BaseGameplayAbility.h"
 
 ABaseCharacter::ABaseCharacter()
 {
@@ -29,9 +30,9 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	if (AbilitySystemComponent)
 	{
 		// 监听属性变化
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBaseAttributeSet::GetHPAttribute()).AddUObject(this,&ABaseCharacter::OnHPAttributeChanged);
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBaseAttributeSet::GetMPAttribute()).AddUObject(this,&ABaseCharacter::OnMPAttributeChanged);
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBaseAttributeSet::GetSPAttribute()).AddUObject(this,&ABaseCharacter::OnSPAttributeChanged);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBaseAttributeSet::GetHPAttribute()).AddUObject(this, &ABaseCharacter::OnHPAttributeChanged);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBaseAttributeSet::GetMPAttribute()).AddUObject(this, &ABaseCharacter::OnMPAttributeChanged);
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(UBaseAttributeSet::GetSPAttribute()).AddUObject(this, &ABaseCharacter::OnSPAttributeChanged);
 	}
 }
 
@@ -60,4 +61,15 @@ void ABaseCharacter::OnSPAttributeChanged(const FOnAttributeChangeData& Data)
 	{
 		SPChanged.Broadcast(Data.NewValue);
 	}
+}
+
+// 获取技能信息
+FGameplayAbilityInfo ABaseCharacter::GetAbilityInfo(const TSubclassOf<UBaseGameplayAbility> AbilityClass, const int Lecel) const
+{
+	if (const UBaseGameplayAbility* Ability = AbilityClass->GetDefaultObject<UBaseGameplayAbility>(); AbilitySystemComponent)
+	{
+		return Ability->GetAbilityInfo(Lecel);
+	}
+
+	return FGameplayAbilityInfo();
 }
