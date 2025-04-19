@@ -1,5 +1,6 @@
 ﻿import * as UE from "ue";
 import mixin from "../../mixin";
+import {$Nullable} from "puerts";
 
 // 资产路径
 const AssetPath = "/Game/Blueprints/Character/BP_BaseCharacter.BP_BaseCharacter_C";
@@ -9,6 +10,9 @@ const GA_BaseResponseClass = UE.Class.Load("/Game/Blueprints/Abilitys/BaseAbilit
 
 // 普通攻击技能
 const GA_MeleeClass = UE.Class.Load("/Game/Blueprints/Abilitys/_00Melee/GA_Melee.GA_Melee_C")
+
+// 命中标签
+const MeleeHitTag = new UE.GameplayTag("Ability.Melee.HitEvent")
 
 // 创建一个继承ts类（或者其他类）的接口（用来类型提示）
 export interface BP_BaseCharacter extends UE.Game.Blueprints.Character.BP_BaseCharacter.BP_BaseCharacter_C {
@@ -48,11 +52,50 @@ export class BP_BaseCharacter implements BP_BaseCharacter {
         this.HPChanged.Add((...args) => this.HPChangedEvend(...args))
         this.MPChanged.Add((...args) => this.MPChangedEvend(...args))
         this.SPChanged.Add((...args) => this.SPChangedEvend(...args))
+
+        this.DamageBox.OnComponentBeginOverlap.Add((...args) => this.WeaponOverlap(...args))
+    }
+
+    // 武器重叠事件
+    WeaponOverlap(OverlappedComponent: $Nullable<UE.PrimitiveComponent>, OtherActor: $Nullable<UE.Actor>, OtherComp: $Nullable<UE.PrimitiveComponent>, OtherBodyIndex: number, bFromSweep: boolean, SweepResult: UE.HitResult) {
+
+        if (this == OtherActor) return
+
+        if (!this.HitActor.Contains(OtherActor)) {
+            this.HitActor.Add(OtherActor)
+            UE.KismetSystemLibrary.PrintString(
+                this,
+                `${this.GetName()}击中了-->${OtherActor.GetName()}`,
+                true,
+                true,
+                UE.LinearColor.Red,
+                5.0
+            )
+            
+            const GameplayEventData = new UE.GameplayEventData
+            GameplayEventData.EventTag = MeleeHitTag
+            GameplayEventData.Instigator = this
+            GameplayEventData.Target = OtherActor
+            UE.AbilitySystemBlueprintLibrary.SendGameplayEventToActor(this, MeleeHitTag,GameplayEventData)
+        }
+    }
+
+    // 开始伤害
+    OpenDamage() {
+        this.HitActor.Empty()
+        this.DamageBox.SetCollisionEnabled(UE.ECollisionEnabled.QueryOnly)
+
+    }
+
+    // 结束伤害
+    EndDamage() {
+        this.HitActor.Empty()
+        this.DamageBox.SetCollisionEnabled(UE.ECollisionEnabled.NoCollision)
     }
 
     // 血量变化
     protected HPChangedEvend(Value: number) {
-        // UE.KismetSystemLibrary.PrintString(this, Value.toString(), true, true, UE.LinearColor.Green)
+        // UE.KismetSystemLibrary.PrintString(this, `我是${this.GetName()},我有${Value.toString()}滴血`, true, true, UE.LinearColor.Green)
     }
 
     // 蓝量变化
