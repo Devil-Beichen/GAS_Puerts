@@ -29,3 +29,5 @@ import "./Blueprints/Test/BP_Test";
 import "./Blueprints/Character/BP_BaseCharacter";
 import "./Blueprints/Character/Player/BP_Player";
 import "./Blueprints/Abilitys/BaseAbility/GA_BaseResponse";
+import "./Blueprints/Character/Player/BP_PlayerController";
+import "./Blueprints/Abilitys/_00Melee/GA_Melee";
