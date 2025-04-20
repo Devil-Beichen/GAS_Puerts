@@ -19,9 +19,10 @@ export interface BP_Enemy extends UE.Game.Blueprints.Character.Enemy.BP_Enemy.BP
 @mixin(AssetPath)
 export class BP_Enemy extends BP_BaseCharacter implements BP_Enemy {
 
+    // 血条UI
     UMG_Bar: UMG_EnemyBar;
     bSuccess: $Ref<boolean>;
-    
+
     // 开始
     ReceiveBeginPlay() {
         super.ReceiveBeginPlay();
@@ -33,13 +34,21 @@ export class BP_Enemy extends BP_BaseCharacter implements BP_Enemy {
     // tick
     ReceiveTick(DeltaSeconds: number) {
         super.ReceiveTick(DeltaSeconds);
-        this.SetBarRotation()
+        if (!this.Dead) {
+            this.SetBarRotation()
+        }
+
     }
 
     // 监听血量变化
     protected HPChangedEvend(Value: number) {
         super.HPChangedEvend(Value);
         this.SetBarValue()
+        if (this.Dead) {
+            if (this.Bar) {
+                this.Bar.K2_DestroyComponent(this)
+            }
+        }
     }
 
     // 设置血条的值

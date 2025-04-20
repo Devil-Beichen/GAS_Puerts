@@ -1,12 +1,13 @@
 ﻿import * as UE from "ue";
 import mixin from "../../mixin";
-import {$Nullable} from "puerts";
+import {$Nullable, $Ref} from "puerts";
 
 // 资产路径
 const AssetPath = "/Game/Blueprints/Character/BP_BaseCharacter.BP_BaseCharacter_C";
 
 // 被动技能类
 const GA_BaseResponseClass = UE.Class.Load("/Game/Blueprints/Abilitys/BaseAbility/GA_BaseResponse.GA_BaseResponse_C")
+const BaseResponseTag = new UE.GameplayTag("Ability.BaseResponse")
 
 // 普通攻击技能
 const GA_MeleeClass = UE.Class.Load("/Game/Blueprints/Abilitys/_00Melee/GA_Melee.GA_Melee_C")
@@ -22,7 +23,13 @@ export interface BP_BaseCharacter extends UE.Game.Blueprints.Character.BP_BaseCh
 @mixin(AssetPath)
 export class BP_BaseCharacter implements BP_BaseCharacter {
 
+    // 动画蓝图
+    ABP_Sinbi: UE.Game.Blueprints.Character.Animations.ABP_Sinbi.ABP_Sinbi_C
+    // 死亡
+    Dead: boolean
+
     ReceiveBeginPlay() {
+        this.ABP_Sinbi = this.Mesh.GetAnimInstance() as UE.Game.Blueprints.Character.Animations.ABP_Sinbi.ABP_Sinbi_C
         this.InitAbility()
         this.InitBind()
     }
@@ -71,12 +78,12 @@ export class BP_BaseCharacter implements BP_BaseCharacter {
                 UE.LinearColor.Red,
                 5.0
             )
-            
+
             const GameplayEventData = new UE.GameplayEventData
             GameplayEventData.EventTag = MeleeHitTag
             GameplayEventData.Instigator = this
             GameplayEventData.Target = OtherActor
-            UE.AbilitySystemBlueprintLibrary.SendGameplayEventToActor(this, MeleeHitTag,GameplayEventData)
+            UE.AbilitySystemBlueprintLibrary.SendGameplayEventToActor(this, MeleeHitTag, GameplayEventData)
         }
     }
 
@@ -95,6 +102,13 @@ export class BP_BaseCharacter implements BP_BaseCharacter {
 
     // 血量变化
     protected HPChangedEvend(Value: number) {
+        if (Value <= 0 && !this.Dead) {
+            this.Dead = true
+            this.ABP_Sinbi.Dead = true
+            this.AbilitySystemComponent.RemoveActiveEffectsWithTags(this.GetAbilityTag(BaseResponseTag))
+            this.CapsuleComponent.SetCollisionEnabled(UE.ECollisionEnabled.NoCollision)
+
+        }
         // UE.KismetSystemLibrary.PrintString(this, `我是${this.GetName()},我有${Value.toString()}滴血`, true, true, UE.LinearColor.Green)
     }
 
