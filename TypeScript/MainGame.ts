@@ -33,3 +33,6 @@ import "./Blueprints/Character/Player/BP_PlayerController";
 import "./Blueprints/Abilitys/_00Melee/GA_Melee";
 import "./Blueprints/Character/Enemy/BP_Enemy";
 import "./Blueprints/Character/Enemy/UMG/UMG_EnemyBar";
+import "./Blueprints/Character/Enemy/BP_AIController";
+import "./Blueprints/Character/Enemy/AI/BTT_FindPlayer";
+import "./Blueprints/Character/Enemy/AI/BTT_MeleeAttack";

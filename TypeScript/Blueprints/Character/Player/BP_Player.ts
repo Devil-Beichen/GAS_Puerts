@@ -16,6 +16,9 @@ export interface BP_Player extends UE.Game.Blueprints.Character.Player.BP_Player
 @mixin(AssetPath)
 export class BP_Player extends BP_BaseCharacter implements BP_Player {
 
+    // 玩家控制器
+    BP_PlayerController: UE.Game.Blueprints.Character.Player.BP_PlayerController.BP_PlayerController_C;
+
     // 相机开始位置
     CameraStartLocation = new UE.Vector;
     // 相机结束位置
@@ -90,5 +93,13 @@ export class BP_Player extends BP_BaseCharacter implements BP_Player {
         const NewRotation = UE.KismetMathLibrary.RLerp(this.CameraStartRotation, new UE.Rotator(-17, 0, 0), this.LookCameraLine_Time_06CE2FB749897C2110B6F4949423121D, true)
         this.Camera.K2_SetRelativeLocationAndRotation(NewLocation, NewRotation, false, null, false)
 
+    }
+
+    // 血量变化
+    protected HPChangedEvend(Value: number) {
+        super.HPChangedEvend(Value);
+        if (this.Dead) {
+            this.DisableInput(this.BP_PlayerController)
+        }
     }
 }
