@@ -1,6 +1,9 @@
 import * as UE from "ue";
 import {blueprint} from "puerts";
 
+// 存储已经加载的蓝图类
+export const BlueprintClasses: Map<string, UE.Class> = new Map<string, UE.Class>()
+
 
 /**
  创建一个类装饰器，用于将蓝图类混入目标TypeScript类
@@ -12,7 +15,10 @@ import {blueprint} from "puerts";
 export default function mixin<T extends typeof UE.Object>(blueprintPath: string, objectTakeByNative = true) {
     // 加载并转换蓝图类为可用的JavaScript类
     const UClass = UE.Class.Load(blueprintPath);
-    if (!UClass) {
+    
+    if (UClass && !BlueprintClasses.has(blueprintPath)) {
+        BlueprintClasses.set(blueprintPath, UClass)
+    } else {
         throw new Error(`Failed to load blueprint class at path: ${blueprintPath}`);
     }
     /**
