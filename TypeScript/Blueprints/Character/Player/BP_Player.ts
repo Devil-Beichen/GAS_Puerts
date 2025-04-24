@@ -1,12 +1,17 @@
 ﻿import * as UE from "ue";
 import mixin from "../../../mixin";
 import {BP_BaseCharacter} from "../BP_BaseCharacter";
+import {BP_PlayerController} from "./BP_PlayerController";
 
 
 // 资产路径
 const AssetPath = "/Game/Blueprints/Character/Player/BP_Player.BP_Player_C";
 // 输入映射
 const IMC_Default = UE.InputMappingContext.Load("/Game/Blueprints/Input/IMC_Default.IMC_Default")
+
+// 创建一个属性
+const AttributeSetHP = new UE.GameplayAttribute("HP", "/Script/GAS_Puerts.BaseAttributeSet:HP", null)
+const AttributeSetMaxHP = new UE.GameplayAttribute("MaxHP", "/Script/GAS_Puerts.BaseAttributeSet:MaxHP", null)
 
 // 创建一个继承ts类（或者其他类）的接口（用来类型提示）
 export interface BP_Player extends UE.Game.Blueprints.Character.Player.BP_Player.BP_Player_C {
@@ -17,7 +22,7 @@ export interface BP_Player extends UE.Game.Blueprints.Character.Player.BP_Player
 export class BP_Player extends BP_BaseCharacter implements BP_Player {
 
     // 玩家控制器
-    BP_PlayerController: UE.Game.Blueprints.Character.Player.BP_PlayerController.BP_PlayerController_C;
+    BP_PlayerController: BP_PlayerController;
 
     // 相机开始位置
     CameraStartLocation = new UE.Vector;
@@ -29,7 +34,7 @@ export class BP_Player extends BP_BaseCharacter implements BP_Player {
     CameraEndRotation = new UE.Rotator(-17, 0, 0);
 
     ReceiveBeginPlay() {
-        this.BP_PlayerController = UE.GameplayStatics.GetPlayerController(this, 0) as UE.Game.Blueprints.Character.Player.BP_PlayerController.BP_PlayerController_C
+        this.BP_PlayerController = UE.GameplayStatics.GetPlayerController(this, 0) as BP_PlayerController
         super.ReceiveBeginPlay();
         this.AddMappingContext()
         this.LookCameraLine.SetPlayRate(1 / 0.3);
@@ -49,6 +54,22 @@ export class BP_Player extends BP_BaseCharacter implements BP_Player {
 
             UE.GameplayStatics.GetPlayerCameraManager(this, 0).ViewPitchMin = -65;
             UE.GameplayStatics.GetPlayerCameraManager(this, 0).ViewPitchMax = 25;
+        }
+    }
+    
+    // 初始化技能
+    protected InitAbility() {
+        // 调用父类的初始化技能方法
+        super.InitAbility();
+        // 遍历所有技能
+        for (let i = 0; i < this.GAS.Num(); i++) {
+            // 检查当前技能是否有效
+            if (this.GAS.GetRef(i)) {
+                // 将技能赋予角色
+                this.AbilitySystemComponent.K2_GiveAbility(this.GAS.GetRef(i))
+                // 初始化UI中对应的技能槽信息
+                this.BP_PlayerController.MainUI.AllAbilitySlot.GetRef(i).InitInfo(this.GetAbilityInfo(this.GAS.GetRef(i), 0))
+            }
         }
     }
 
@@ -98,6 +119,10 @@ export class BP_Player extends BP_BaseCharacter implements BP_Player {
     // 血量变化
     protected HPChangedEvend(Value: number) {
         super.HPChangedEvend(Value);
+
+        const Pre = Value / UE.AbilitySystemBlueprintLibrary.GetFloatAttributeFromAbilitySystemComponent(this.AbilitySystemComponent, AttributeSetMaxHP, null)
+        this.BP_PlayerController.MainUI.HPAttributeBar.SetProgress(Pre)
+
         if (this.Dead) {
             this.DisableInput(this.BP_PlayerController)
         }

@@ -10,6 +10,11 @@ import {blueprint} from "puerts";
  @returns - 类装饰器函数，接受需要混入蓝图功能的目标类
  */
 export default function mixin<T extends typeof UE.Object>(blueprintPath: string, objectTakeByNative = true) {
+    // 加载并转换蓝图类为可用的JavaScript类
+    const UClass = UE.Class.Load(blueprintPath);
+    if (!UClass) {
+        throw new Error(`Failed to load blueprint class at path: ${blueprintPath}`);
+    }
     /**
      * 类装饰器函数
      * @param target 被装饰类的构造函数，要求：
@@ -18,10 +23,13 @@ export default function mixin<T extends typeof UE.Object>(blueprintPath: string,
      * @template U 被装饰类的实例类型，需继承UE引擎对象
      */
     return function <U extends UE.Object>(target: new (...args: any[]) => U & InstanceType<T>) {
-        // 加载并转换蓝图类为可用的JavaScript类
-        const UClass = UE.Class.Load(blueprintPath);
-        const JsClass = blueprint.tojs<T>(UClass);
-        // 执行蓝图混入操作，合并蓝图功能到目标类
-        return blueprint.mixin(JsClass, target, {objectTakeByNative});
+        try {
+            const JsClass = blueprint.tojs<T>(UClass);
+            // 执行蓝图混入操作，合并蓝图功能到目标类
+            return blueprint.mixin(JsClass, target, {objectTakeByNative});
+        } catch (error) {
+            console.error(`Failed to mixin blueprint class: ${blueprintPath}`, error);
+            throw error;
+        }
     };
 }
