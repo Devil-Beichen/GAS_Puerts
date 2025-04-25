@@ -7,6 +7,8 @@ import {UMG_MainUI} from "../Player/UMG/UMG_MainUI";
 const AssetPath = "/Game/Blueprints/Character/Player/BP_PlayerController.BP_PlayerController_C";
 // 普通攻击标签
 const MeleeTag = new UE.GameplayTag("Ability.Melee")
+// 回血技能Tag
+const HPRegenTag = new UE.GameplayTag("Ability.HPRegen")
 
 // 主UI类
 const MainUIClass = UE.Class.Load("/Game/Blueprints/Character/Player/UMG/UMG_MainUI.UMG_MainUI_C")
@@ -40,5 +42,12 @@ export class BP_PlayerController implements BP_PlayerController {
             this.BP_Player.ActivateAvility(MeleeTag)
         }
 
+    }
+
+    HPRegen() {
+        console.log("HPRegen")
+        if (this.BP_Player) {
+            this.BP_Player.ActivateAvility(HPRegenTag)
+        }
     }
 }

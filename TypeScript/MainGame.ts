@@ -39,3 +39,6 @@ import "./Blueprints/Character/Enemy/AI/BTT_MeleeAttack";
 import "./Blueprints/Character/Player/UMG/UMG_MainUI";
 import "./Blueprints/Character/Player/UMG/UMG_AttibuteBar";
 import "./Blueprints/Character/Player/UMG/UMG_AbilitySlot";
+import "./Blueprints/Abilitys/_01HPRegen/GA_HPRegen";
+import "./Blueprints/Abilitys/_01HPRegen/GE_HPRegen_CD";
+import "./Blueprints/Abilitys/_01HPRegen/GC_HPRegen";

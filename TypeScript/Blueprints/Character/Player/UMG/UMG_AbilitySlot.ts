@@ -20,8 +20,6 @@ export class UMG_AbilitySlot implements UMG_AbilitySlot {
     CD_Current: number;
     // 在技能CD期间
     IsDuringCD: boolean;
-    // 技能类
-    AbilityClass: UE.Class;
 
     PreConstruct(IsDesignTime: boolean) {
         this.Key.SetText(this.KeyText)

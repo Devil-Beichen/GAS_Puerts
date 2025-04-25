@@ -13,6 +13,9 @@ const IMC_Default = UE.InputMappingContext.Load("/Game/Blueprints/Input/IMC_Defa
 const AttributeSetHP = new UE.GameplayAttribute("HP", "/Script/GAS_Puerts.BaseAttributeSet:HP", null)
 const AttributeSetMaxHP = new UE.GameplayAttribute("MaxHP", "/Script/GAS_Puerts.BaseAttributeSet:MaxHP", null)
 
+const AttributeSetMP = new UE.GameplayAttribute("MP", "/Script/GAS_Puerts.BaseAttributeSet:MP", null)
+const AttributeSetMaxMP = new UE.GameplayAttribute("MaxMP", "/Script/GAS_Puerts.BaseAttributeSet:MaxMP", null)
+
 // 创建一个继承ts类（或者其他类）的接口（用来类型提示）
 export interface BP_Player extends UE.Game.Blueprints.Character.Player.BP_Player.BP_Player_C {
 }
@@ -56,7 +59,7 @@ export class BP_Player extends BP_BaseCharacter implements BP_Player {
             UE.GameplayStatics.GetPlayerCameraManager(this, 0).ViewPitchMax = 25;
         }
     }
-    
+
     // 初始化技能
     protected InitAbility() {
         // 调用父类的初始化技能方法
@@ -126,5 +129,12 @@ export class BP_Player extends BP_BaseCharacter implements BP_Player {
         if (this.Dead) {
             this.DisableInput(this.BP_PlayerController)
         }
+    }
+
+    // 魔法值变化
+    protected MPChangedEvend(Value: number) {
+        super.MPChangedEvend(Value);
+        const Pre = Value / UE.AbilitySystemBlueprintLibrary.GetFloatAttributeFromAbilitySystemComponent(this.AbilitySystemComponent, AttributeSetMaxMP, null)
+        this.BP_PlayerController.MainUI.MPAttributeBar.SetProgress(Pre)
     }
 }
