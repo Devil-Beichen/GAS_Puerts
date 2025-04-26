@@ -9,11 +9,15 @@ const AssetPath = "/Game/Blueprints/Character/Player/BP_PlayerController.BP_Play
 const MeleeTag = new UE.GameplayTag("Ability.Melee")
 // 回血技能Tag
 const HPRegenTag = new UE.GameplayTag("Ability.HPRegen")
+// 冲刺标签
+const DashTag = new UE.GameplayTag("Ability.Dash")
 
 // 普通攻击动作
 const MeleeAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Melee.IA_Melee")
 // 回血技能动作
 const HPRegenAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_HPRegen.IA_HPRegen")
+// 冲刺动作
+const DashAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Dash.IA_Dash")
 
 // 主UI类
 const MainUIClass = UE.Class.Load("/Game/Blueprints/Character/Player/UMG/UMG_MainUI.UMG_MainUI_C")
@@ -50,10 +54,10 @@ export class BP_PlayerController implements BP_PlayerController {
         if (InputComponent) {
             InputComponent.BindAction(MeleeAction, UE.ETriggerEvent.Started, this, "Melee")
             InputComponent.BindAction(HPRegenAction, UE.ETriggerEvent.Started, this, "HPRegen")
+            InputComponent.BindAction(DashAction, UE.ETriggerEvent.Started, this, "Dash")
         }
     }
-
-
+    
     // 普通攻击
     Melee() {
         if (this.BP_Player) {
@@ -66,6 +70,14 @@ export class BP_PlayerController implements BP_PlayerController {
     HPRegen() {
         if (this.BP_Player) {
             this.BP_Player.ActivateAvility(HPRegenTag)
+        }
+    }
+    
+    // 冲刺
+    Dash() {
+        if(this.BP_Player)
+        {
+            this.BP_Player.ActivateAvility(DashTag)
         }
     }
 }

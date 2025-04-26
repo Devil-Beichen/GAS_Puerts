@@ -27,11 +27,14 @@ export class BP_BaseCharacter implements BP_BaseCharacter {
     ABP_Sinbi: UE.Game.Blueprints.Character.Animations.ABP_Sinbi.ABP_Sinbi_C
     // 死亡
     Dead: boolean
+    // 初始化摩擦力
+    InitFriction: number = 0
 
     ReceiveBeginPlay() {
         this.ABP_Sinbi = this.Mesh.GetAnimInstance() as UE.Game.Blueprints.Character.Animations.ABP_Sinbi.ABP_Sinbi_C
         this.InitAbility()
         this.InitBind()
+        this.InitFriction = this.CharacterMovement.GroundFriction
     }
 
     // 初始化技能
@@ -122,5 +125,36 @@ export class BP_BaseCharacter implements BP_BaseCharacter {
     protected SPChangedEvend(Value: number) {
         // UE.KismetSystemLibrary.PrintString(this, Value.toString(), true, true, UE.LinearColor.Green)
     }
+
+    // 冲刺
+    DashForward(DashDirection: UE.Vector, Force: number /* = 1.000000 */, DashTime: number/* = 0.500000 */) {
+
+        this.SetFrictionToZero(true)
+        const Impulse = new UE.Vector(
+            DashDirection.X * Force,
+            DashDirection.Y * Force,
+            DashDirection.Z * Force
+        )
+        this.CharacterMovement.AddImpulse(Impulse, true)
+
+        setTimeout(() => {
+            this.SetFrictionToZero(false)
+        }, DashTime * 1000)
+
+    }
+
+    // 设置摩擦力为0
+    SetFrictionToZero(Zero: boolean) {
+        if (Zero) {
+            this.CharacterMovement.GroundFriction = 0
+            this.CapsuleComponent.SetCollisionResponseToChannel(UE.ECollisionChannel.ECC_Pawn, UE.ECollisionResponse.ECR_Ignore)
+            this.CapsuleComponent.SetCollisionResponseToChannel(UE.ECollisionChannel.ECC_Camera, UE.ECollisionResponse.ECR_Ignore)
+        } else {
+            this.CharacterMovement.GroundFriction = this.InitFriction
+            this.CapsuleComponent.SetCollisionResponseToChannel(UE.ECollisionChannel.ECC_Pawn, UE.ECollisionResponse.ECR_Block)
+            this.CapsuleComponent.SetCollisionResponseToChannel(UE.ECollisionChannel.ECC_Camera, UE.ECollisionResponse.ECR_Block)
+        }
+    }
+
 }
 
