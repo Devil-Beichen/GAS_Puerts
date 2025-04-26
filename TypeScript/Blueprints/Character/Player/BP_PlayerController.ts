@@ -10,6 +10,11 @@ const MeleeTag = new UE.GameplayTag("Ability.Melee")
 // 回血技能Tag
 const HPRegenTag = new UE.GameplayTag("Ability.HPRegen")
 
+// 普通攻击动作
+const MeleeAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Melee.IA_Melee")
+// 回血技能动作
+const HPRegenAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_HPRegen.IA_HPRegen")
+
 // 主UI类
 const MainUIClass = UE.Class.Load("/Game/Blueprints/Character/Player/UMG/UMG_MainUI.UMG_MainUI_C")
 
@@ -34,7 +39,20 @@ export class BP_PlayerController implements BP_PlayerController {
         if (this.MainUI) {
             this.MainUI.AddToViewport()
         }
+
+        this.BindKeys()
+
     }
+
+    // 绑定按键
+    BindKeys() {
+        const InputComponent = this.GetComponentByClass(UE.EnhancedInputComponent.StaticClass()) as UE.EnhancedInputComponent
+        if (InputComponent) {
+            InputComponent.BindAction(MeleeAction, UE.ETriggerEvent.Started, this, "Melee")
+            InputComponent.BindAction(HPRegenAction, UE.ETriggerEvent.Started, this, "HPRegen")
+        }
+    }
+
 
     // 普通攻击
     Melee() {
@@ -44,8 +62,8 @@ export class BP_PlayerController implements BP_PlayerController {
 
     }
 
+    // 回血技能
     HPRegen() {
-        console.log("HPRegen")
         if (this.BP_Player) {
             this.BP_Player.ActivateAvility(HPRegenTag)
         }
