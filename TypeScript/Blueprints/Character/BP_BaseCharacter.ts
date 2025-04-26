@@ -156,5 +156,10 @@ export class BP_BaseCharacter implements BP_BaseCharacter {
         }
     }
 
+    // 眩晕
+    Stun(StunDuration: number) {
+
+    }
+
 }
 

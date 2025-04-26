@@ -2,6 +2,8 @@
 import mixin from "../../../mixin";
 import {BP_BaseCharacter} from "../BP_BaseCharacter";
 import {BP_PlayerController} from "./BP_PlayerController";
+import {$Nullable} from "puerts";
+import {NewArray, TArray} from "ue";
 
 
 // 资产路径
@@ -24,6 +26,9 @@ const AttributeSetMaxHP = new UE.GameplayAttribute("MaxHP", "/Script/GAS_Puerts.
 
 const AttributeSetMP = new UE.GameplayAttribute("MP", "/Script/GAS_Puerts.BaseAttributeSet:MP", null)
 const AttributeSetMaxMP = new UE.GameplayAttribute("MaxMP", "/Script/GAS_Puerts.BaseAttributeSet:MaxMP", null)
+
+// 冲刺命中标签
+const DashHitTag = new UE.GameplayTag("Ability.Dash.HitEvent")
 
 // 创建一个继承ts类（或者其他类）的接口（用来类型提示）
 export interface BP_Player extends UE.Game.Blueprints.Character.Player.BP_Player.BP_Player_C {
@@ -52,6 +57,7 @@ export class BP_Player extends BP_BaseCharacter implements BP_Player {
         super.ReceiveBeginPlay();
         this.AddMappingContext()
         this.LookCameraLine.SetPlayRate(1 / 0.3);
+        this.Sphere.OnComponentBeginOverlap.Add((...args) => this.SphereOnOverlap(...args))
 
     }
 
@@ -80,6 +86,37 @@ export class BP_Player extends BP_BaseCharacter implements BP_Player {
             InputComponent.BindAction(LookAction, UE.ETriggerEvent.Triggered, this, "Look")
             InputComponent.BindAction(LockCameraAction, UE.ETriggerEvent.Started, this, "IA_LockCamera")
         }
+    }
+
+    // 球体重叠
+    SphereOnOverlap(OverlappedComponent: $Nullable<UE.PrimitiveComponent>, OtherActor: $Nullable<UE.Actor>, OtherComp: $Nullable<UE.PrimitiveComponent>, OtherBodyIndex: number, bFromSweep: boolean, SweepResult: UE.HitResult) {
+        if (OtherActor != this && !this.HitActor.Contains(OtherActor)) {
+            this.HitActor.Add(OtherActor)
+            UE.KismetSystemLibrary.PrintString(
+                this,
+                `${this.GetName()}击中了-->${OtherActor.GetName()}`,
+                true,
+                true,
+                UE.LinearColor.Red,
+                5.0
+            )
+
+            const GameplayEventData = new UE.GameplayEventData
+            GameplayEventData.EventTag = DashHitTag
+            GameplayEventData.Instigator = this
+            GameplayEventData.Target = OtherActor
+            UE.AbilitySystemBlueprintLibrary.SendGameplayEventToActor(this, DashHitTag, GameplayEventData)
+        }
+
+    }
+
+    // 锁定摩擦力
+    SetFrictionToZero(Zero: boolean) {
+        super.SetFrictionToZero(Zero);
+        this.SpringArm.bDoCollisionTest = !Zero
+        this.Sphere.SetCollisionEnabled(Zero ? UE.ECollisionEnabled.QueryOnly : UE.ECollisionEnabled.NoCollision)
+        this.Sphere.SetSphereRadius(Zero ? 80 : 32, true)
+        this.HitActor.Empty()
     }
 
     // 初始化技能

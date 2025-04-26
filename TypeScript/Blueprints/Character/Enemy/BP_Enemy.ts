@@ -10,6 +10,8 @@ const AssetPath = "/Game/Blueprints/Character/Enemy/BP_Enemy.BP_Enemy_C";
 // 创建一个属性
 const AttributeSetHP = new UE.GameplayAttribute("HP", "/Script/GAS_Puerts.BaseAttributeSet:HP", null)
 const AttributeSetMaxHP = new UE.GameplayAttribute("MaxHP", "/Script/GAS_Puerts.BaseAttributeSet:MaxHP", null)
+// 眩晕动画
+const MA_Stun = UE.Object.Load("/Game/Blueprints/Character/Animations/Montage/MA_Stun.MA_Stun") as UE.AnimMontage
 
 // 创建一个继承ts类（或者其他类）的接口（用来类型提示）
 export interface BP_Enemy extends UE.Game.Blueprints.Character.Enemy.BP_Enemy.BP_Enemy_C {
@@ -67,5 +69,32 @@ export class BP_Enemy extends BP_BaseCharacter implements BP_Enemy {
         NewRotation.Pitch = CameraRotation.Pitch * -1
         NewRotation.Yaw = CameraRotation.Yaw + 180
         this.Bar.K2_SetWorldRotation(NewRotation, false, null, false)
+    }
+
+    // 停止控制
+    protected StopController() {
+        const AIController = UE.AIBlueprintHelperLibrary.GetAIController(this.GetController())
+        if (AIController) {
+            AIController.BrainComponent.StopLogic("StopController")
+            console.log("停止控制")
+        }
+    }
+
+    // 恢复控制
+    protected ResumeController() {
+        const AIController = UE.AIBlueprintHelperLibrary.GetAIController(this.GetController())
+        if (AIController) {
+            AIController.BrainComponent.RestartLogic()
+        }
+    }
+
+    // 眩晕
+    Stun(StunDuration: number) {
+        this.StopController()
+        this.PlayAnimMontage(MA_Stun)
+
+        setTimeout(() => {
+            this.ResumeController()
+        }, StunDuration * 1000)
     }
 }
