@@ -11,6 +11,10 @@ const MeleeTag = new UE.GameplayTag("Ability.Melee")
 const HPRegenTag = new UE.GameplayTag("Ability.HPRegen")
 // 冲刺标签
 const DashTag = new UE.GameplayTag("Ability.Dash")
+// 激光技能标签
+const LaserTag = new UE.GameplayTag("Ability.Laser")
+// 激光技能结束标签
+const LaserEndTag = new UE.GameplayTag("Ability.Laser.EndEvent")
 
 // 普通攻击动作
 const MeleeAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Melee.IA_Melee")
@@ -18,6 +22,8 @@ const MeleeAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Melee.
 const HPRegenAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_HPRegen.IA_HPRegen")
 // 冲刺动作
 const DashAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Dash.IA_Dash")
+// 激光技能动作
+const LaserAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Laser.IA_Laser")
 
 // 主UI类
 const MainUIClass = UE.Class.Load("/Game/Blueprints/Character/Player/UMG/UMG_MainUI.UMG_MainUI_C")
@@ -55,9 +61,10 @@ export class BP_PlayerController implements BP_PlayerController {
             InputComponent.BindAction(MeleeAction, UE.ETriggerEvent.Started, this, "Melee")
             InputComponent.BindAction(HPRegenAction, UE.ETriggerEvent.Started, this, "HPRegen")
             InputComponent.BindAction(DashAction, UE.ETriggerEvent.Started, this, "Dash")
+            InputComponent.BindAction(LaserAction, UE.ETriggerEvent.Started, this, "Laser")
         }
     }
-    
+
     // 普通攻击
     Melee() {
         if (this.BP_Player) {
@@ -72,12 +79,25 @@ export class BP_PlayerController implements BP_PlayerController {
             this.BP_Player.ActivateAvility(HPRegenTag)
         }
     }
-    
+
     // 冲刺
     Dash() {
-        if(this.BP_Player)
-        {
+        if (this.BP_Player) {
             this.BP_Player.ActivateAvility(DashTag)
+        }
+    }
+
+    // 激光技能
+    Laser() {
+        if (this.BP_Player) {
+            if (!this.BP_Player.IsLasering) {
+                this.BP_Player.ActivateAvility(LaserTag)
+            } else {
+                this.BP_Player.IsLasering = false
+                const GameplayEventData = new UE.GameplayEventData
+                GameplayEventData.EventTag = LaserEndTag
+                UE.AbilitySystemBlueprintLibrary.SendGameplayEventToActor(this.BP_Player, LaserEndTag, GameplayEventData)
+            }
         }
     }
 }

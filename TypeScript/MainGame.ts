@@ -43,3 +43,4 @@ import "./Blueprints/Abilitys/_01HPRegen/GA_HPRegen";
 import "./Blueprints/Abilitys/_01HPRegen/GE_HPRegen_CD";
 import "./Blueprints/Abilitys/_01HPRegen/GC_HPRegen";
 import "./Blueprints/Abilitys/_02Dash/GA_Dash";
+import "./Blueprints/Abilitys/_03Laser/GA_Laser"

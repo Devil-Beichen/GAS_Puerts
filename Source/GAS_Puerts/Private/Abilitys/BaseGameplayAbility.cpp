@@ -80,7 +80,7 @@ bool UBaseGameplayAbility::IsSatisfyCost() const
 			break;
 		}
 
-		if (bResult && Value > AbilityInfo.CostValue)
+		if (bResult && Value > abs(AbilityInfo.CostValue))
 		{
 			return true;
 		}
