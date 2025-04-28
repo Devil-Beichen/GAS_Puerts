@@ -76,7 +76,6 @@ export class BP_Enemy extends BP_BaseCharacter implements BP_Enemy {
         const AIController = UE.AIBlueprintHelperLibrary.GetAIController(this.GetController())
         if (AIController) {
             AIController.BrainComponent.StopLogic("StopController")
-            console.log("停止控制")
         }
     }
 
