@@ -15,6 +15,8 @@ const DashTag = new UE.GameplayTag("Ability.Dash")
 const LaserTag = new UE.GameplayTag("Ability.Laser")
 // 激光技能结束标签
 const LaserEndTag = new UE.GameplayTag("Ability.Laser.EndEvent")
+// 地板爆炸标签
+const GroundBlastTag = new UE.GameplayTag("Ability.GroundBlast")
 
 // 普通攻击动作
 const MeleeAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Melee.IA_Melee")
@@ -24,6 +26,10 @@ const HPRegenAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_HPRe
 const DashAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Dash.IA_Dash")
 // 激光技能动作
 const LaserAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Laser.IA_Laser")
+// 地板爆炸动作
+const GroundBlastAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_GroundBlast.IA_GroundBlast")
+// 右键动作
+const RightAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Right.IA_Right")
 
 // 主UI类
 const MainUIClass = UE.Class.Load("/Game/Blueprints/Character/Player/UMG/UMG_MainUI.UMG_MainUI_C")
@@ -62,15 +68,32 @@ export class BP_PlayerController implements BP_PlayerController {
             InputComponent.BindAction(HPRegenAction, UE.ETriggerEvent.Started, this, "HPRegen")
             InputComponent.BindAction(DashAction, UE.ETriggerEvent.Started, this, "Dash")
             InputComponent.BindAction(LaserAction, UE.ETriggerEvent.Started, this, "Laser")
+            InputComponent.BindAction(GroundBlastAction, UE.ETriggerEvent.Started, this, "GroundBlast")
+            InputComponent.BindAction(RightAction, UE.ETriggerEvent.Started, this, "RightPressed")
         }
     }
 
     // 普通攻击
     Melee() {
         if (this.BP_Player) {
-            this.BP_Player.ActivateAvility(MeleeTag)
+            if (this.BP_Player.IsGroundBlast) {
+                this.BP_Player.AbilitySystemComponent.TargetConfirm()
+                this.BP_Player.IsGroundBlast = false
+            } else {
+                this.BP_Player.ActivateAvility(MeleeTag)
+            }
+
         }
 
+    }
+    
+    // 右键按下
+    RightPressed()
+    {
+        if (this.BP_Player) {
+            this.BP_Player.AbilitySystemComponent.TargetCancel()
+            this.BP_Player.IsGroundBlast = false
+        }
     }
 
     // 回血技能
@@ -98,6 +121,13 @@ export class BP_PlayerController implements BP_PlayerController {
                 GameplayEventData.EventTag = LaserEndTag
                 UE.AbilitySystemBlueprintLibrary.SendGameplayEventToActor(this.BP_Player, LaserEndTag, GameplayEventData)
             }
+        }
+    }
+
+    // 地板爆炸
+    GroundBlast() {
+        if (this.BP_Player) {
+            this.BP_Player.ActivateAvility(GroundBlastTag)
         }
     }
 }
