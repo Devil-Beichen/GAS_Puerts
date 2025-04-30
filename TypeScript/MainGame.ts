@@ -46,3 +46,4 @@ import "./Blueprints/Abilitys/_02Dash/GA_Dash";
 import "./Blueprints/Abilitys/_03Laser/GA_Laser"
 import "./Blueprints/Abilitys/_03Laser/BP_LaserActor";
 import "./Blueprints/Abilitys/_04GroundBlast/GA_GroundBlast";
+import "./Blueprints/Abilitys/_04GroundBlast/BP_GroundSelectTargetActor";
