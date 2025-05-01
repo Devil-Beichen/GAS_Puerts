@@ -78,7 +78,7 @@ export class BP_BaseCharacter implements BP_BaseCharacter {
 
         if (this == OtherActor) return
 
-        if (!this.HitActor.Contains(OtherActor)) {
+        if (!this.HitActor.Contains(OtherActor) && this.GetClass() != OtherActor.GetClass()) {
             this.HitActor.Add(OtherActor)
             UE.KismetSystemLibrary.PrintString(
                 this,

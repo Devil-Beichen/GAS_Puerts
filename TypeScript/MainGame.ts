@@ -40,10 +40,10 @@ import "./Blueprints/Character/Player/UMG/UMG_MainUI";
 import "./Blueprints/Character/Player/UMG/UMG_AttibuteBar";
 import "./Blueprints/Character/Player/UMG/UMG_AbilitySlot";
 import "./Blueprints/Abilitys/_01HPRegen/GA_HPRegen";
-import "./Blueprints/Abilitys/_01HPRegen/GE_HPRegen_CD";
 import "./Blueprints/Abilitys/_01HPRegen/GC_HPRegen";
 import "./Blueprints/Abilitys/_02Dash/GA_Dash";
 import "./Blueprints/Abilitys/_03Laser/GA_Laser"
 import "./Blueprints/Abilitys/_03Laser/BP_LaserActor";
 import "./Blueprints/Abilitys/_04GroundBlast/GA_GroundBlast";
 import "./Blueprints/Abilitys/_04GroundBlast/BP_GroundSelectTargetActor";
+import "./Blueprints/Abilitys/_05FireBlast/GA_05FireBlast";

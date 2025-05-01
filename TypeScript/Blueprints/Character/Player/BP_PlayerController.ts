@@ -17,6 +17,8 @@ const LaserTag = new UE.GameplayTag("Ability.Laser")
 const LaserEndTag = new UE.GameplayTag("Ability.Laser.EndEvent")
 // 地板爆炸标签
 const GroundBlastTag = new UE.GameplayTag("Ability.GroundBlast")
+// 火球爆炸
+const FireBlastTag = new UE.GameplayTag("Ability.FireBlast")
 
 // 普通攻击动作
 const MeleeAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Melee.IA_Melee")
@@ -30,6 +32,7 @@ const LaserAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Laser.
 const GroundBlastAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_GroundBlast.IA_GroundBlast")
 // 右键动作
 const RightAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_Right.IA_Right")
+const FireBlastAction = UE.InputAction.Load("/Game/Blueprints/Input/Action/IA_FireBlast.IA_FireBlast")
 
 // 主UI类
 const MainUIClass = UE.Class.Load("/Game/Blueprints/Character/Player/UMG/UMG_MainUI.UMG_MainUI_C")
@@ -70,6 +73,7 @@ export class BP_PlayerController implements BP_PlayerController {
             InputComponent.BindAction(LaserAction, UE.ETriggerEvent.Started, this, "Laser")
             InputComponent.BindAction(GroundBlastAction, UE.ETriggerEvent.Started, this, "GroundBlast")
             InputComponent.BindAction(RightAction, UE.ETriggerEvent.Started, this, "RightPressed")
+            InputComponent.BindAction(FireBlastAction, UE.ETriggerEvent.Started, this, "FireBlast")
         }
     }
 
@@ -86,10 +90,9 @@ export class BP_PlayerController implements BP_PlayerController {
         }
 
     }
-    
+
     // 右键按下
-    RightPressed()
-    {
+    RightPressed() {
         if (this.BP_Player) {
             this.BP_Player.AbilitySystemComponent.TargetCancel()
             this.BP_Player.IsGroundBlast = false
@@ -126,8 +129,15 @@ export class BP_PlayerController implements BP_PlayerController {
 
     // 地板爆炸
     GroundBlast() {
-        if (this.BP_Player) {
+        if (this.BP_Player && !this.BP_Player.IsGroundBlast) {
             this.BP_Player.ActivateAvility(GroundBlastTag)
+        }
+    }
+
+    // 火球爆炸
+    FireBlast() {
+        if (this.BP_Player) {
+            this.BP_Player.ActivateAvility(FireBlastTag)
         }
     }
 }

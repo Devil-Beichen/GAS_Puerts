@@ -217,4 +217,14 @@ export class BP_Player extends BP_BaseCharacter implements BP_Player {
         return UE.AbilitySystemBlueprintLibrary.GetFloatAttributeFromAbilitySystemComponent(this.AbilitySystemComponent, Attribute, null)
 
     }
+
+    // 拉取
+    Pull() {
+        console.log("拉取")
+    }
+
+    // 推出
+    Push() {
+        console.log("推出")
+    }
 }

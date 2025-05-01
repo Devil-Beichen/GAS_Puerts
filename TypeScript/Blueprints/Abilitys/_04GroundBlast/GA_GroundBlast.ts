@@ -23,7 +23,6 @@ export class GA_GroundBlast extends BP_GameplayAbility implements GA_GroundBlast
 
     Character: BP_BaseCharacter;
     HitLocation: UE.Vector;
-    HitActors: UE.TArray<UE.Actor>;
 
     K2_ActivateAbility() {
         this.Character = this.GetAvatarActorFromActorInfo() as BP_BaseCharacter
