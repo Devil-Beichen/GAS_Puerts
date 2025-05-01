@@ -7,7 +7,11 @@ const AssetPath = "/Game/Blueprints/Character/BP_BaseCharacter.BP_BaseCharacter_
 
 // 被动技能类
 const GA_BaseResponseClass = UE.Class.Load("/Game/Blueprints/Abilitys/BaseAbility/GA_BaseResponse.GA_BaseResponse_C")
+
+const BurmingTag = new UE.GameplayTag("Ability.FireBlast.BurmingDamage")
+
 const BaseResponseTag = new UE.GameplayTag("Ability.BaseResponse")
+
 
 // 普通攻击技能
 const GA_MeleeClass = UE.Class.Load("/Game/Blueprints/Abilitys/_00Melee/GA_Melee.GA_Melee_C")
@@ -117,6 +121,7 @@ export class BP_BaseCharacter implements BP_BaseCharacter {
             this.ABP_Sinbi.Dead = true
             this.AbilitySystemComponent.RemoveActiveEffectsWithTags(this.GetAbilityTag(BaseResponseTag))
             this.CapsuleComponent.SetCollisionEnabled(UE.ECollisionEnabled.NoCollision)
+            this.AbilitySystemComponent.RemoveActiveEffectsWithTags(this.GetAbilityTag(BurmingTag))
 
         }
         // UE.KismetSystemLibrary.PrintString(this, `我是${this.GetName()},我有${Value.toString()}滴血`, true, true, UE.LinearColor.Green)

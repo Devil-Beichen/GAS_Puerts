@@ -29,6 +29,10 @@ const AttributeSetMaxMP = new UE.GameplayAttribute("MaxMP", "/Script/GAS_Puerts.
 
 // 冲刺命中标签
 const DashHitTag = new UE.GameplayTag("Ability.Dash.HitEvent")
+// 拉取标签
+const PullTag = new UE.GameplayTag("Ability.FireBlast.PullEvent")
+// 推出标签
+const PushTag = new UE.GameplayTag("Ability.FireBlast.PushEvent")
 
 // 创建一个继承ts类（或者其他类）的接口（用来类型提示）
 export interface BP_Player extends UE.Game.Blueprints.Character.Player.BP_Player.BP_Player_C {
@@ -220,11 +224,11 @@ export class BP_Player extends BP_BaseCharacter implements BP_Player {
 
     // 拉取
     Pull() {
-        console.log("拉取")
+        UE.AbilitySystemBlueprintLibrary.SendGameplayEventToActor(this, PullTag, null)
     }
 
     // 推出
     Push() {
-        console.log("推出")
+        UE.AbilitySystemBlueprintLibrary.SendGameplayEventToActor(this, PushTag, null)
     }
 }

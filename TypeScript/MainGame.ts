@@ -46,4 +46,9 @@ import "./Blueprints/Abilitys/_03Laser/GA_Laser"
 import "./Blueprints/Abilitys/_03Laser/BP_LaserActor";
 import "./Blueprints/Abilitys/_04GroundBlast/GA_GroundBlast";
 import "./Blueprints/Abilitys/_04GroundBlast/BP_GroundSelectTargetActor";
-import "./Blueprints/Abilitys/_05FireBlast/GA_05FireBlast";
+import "./Blueprints/Abilitys/_05FireBlast/GA_FireBlast";
+import "./Blueprints/Abilitys/_05FireBlast/GCN_Burming";
+import "./Blueprints/Abilitys/_05FireBlast/BP_RemoveBurming";
+import "./Blueprints/Character/Enemy/AI/BTS_CheckDead";
+import "./Blueprints/Character/Enemy/AI/BTS_CheckBurming";
+import "./Blueprints/Character/Enemy/AI/BTT_FindRemoveBurming";
